@@ -31,6 +31,7 @@ def test_spark_sql_query():
         Row(store_name="Store D", location="Houston", monthly_sales=52000),
         Row(store_name="Store E", location="Phoenix", monthly_sales=48000),
         Row(store_name="Store F", location="Philadelphia", monthly_sales=55000),
+        Row(store_name="Store H", location="San Diego", monthly_sales=31000),
         Row(store_name="Store J", location="San Jose", monthly_sales=47000),
     ]
 
