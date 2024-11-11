@@ -10,7 +10,7 @@ def test_init_spark():
 
 def test_read_csv():
     spark = init_spark(app_name="PySpark Data Processing")
-    csv_file_path = "student_performance.csv"
+    csv_file_path = "store_sales.csv"
     df = read_csv(spark, csv_file_path)
     print(df)
     assert df.count() > 0, "Test failed."
@@ -20,17 +20,17 @@ def test_read_csv():
 def test_spark_sql_query():
     # create SparkSession for testing
     spark = SparkSession.builder.appName("Spark SQL Query Test").getOrCreate()
-    csv_file_path = "student_performance.csv"
+    csv_file_path = "store_sales.csv"
     df = read_csv(spark, csv_file_path)
     result_df = spark_sql_query(spark, df)
 
-    # expected df
+    # expected df with stores that have customer satisfaction > 80
     expected_data = [
-        Row(name="Sarah", attendance_rate=90),
-        Row(name="Michael", attendance_rate=92),
-        Row(name="Emma", attendance_rate=88),
-        Row(name="Olivia", attendance_rate=95),
-        Row(name="Isabella", attendance_rate=91),
+        Row(store_name="Store B", location="Los Angeles", monthly_sales=45000),
+        Row(store_name="Store D", location="Houston", monthly_sales=52000),
+        Row(store_name="Store E", location="Phoenix", monthly_sales=48000),
+        Row(store_name="Store F", location="Philadelphia", monthly_sales=55000),
+        Row(store_name="Store J", location="San Jose", monthly_sales=47000),
     ]
 
     expected_df = spark.createDataFrame(expected_data)
@@ -42,23 +42,28 @@ def test_spark_sql_query():
 
 def test_transform():
     # create SparkSession for testing
-    spark = SparkSession.builder.appName("Add Attendance Category Test").getOrCreate()
+    spark = SparkSession.builder.appName("Transform Test").getOrCreate()
 
     # Sample data for testing
     sample_data = [
-        Row(attendance_rate=40),
-        Row(attendance_rate=60),
-        Row(attendance_rate=90),
+        Row(monthly_sales=25000, customer_satisfaction=65),
+        Row(monthly_sales=35000, customer_satisfaction=82),
+        Row(monthly_sales=55000, customer_satisfaction=92),
     ]
     df = spark.createDataFrame(sample_data)
 
     # call function
     result_df = transform(df)
 
-    categories = [row["attendance_category"] for row in result_df.collect()]
-    expected_categories = ["Low", "Medium", "High"]
+    # Get categories for sales and satisfaction
+    sales_categories = [row["sales_category"] for row in result_df.collect()]
+    satisfaction_categories = [row["satisfaction_category"] for row in result_df.collect()]
 
-    assert categories == expected_categories, "Test failed!"
+    expected_sales_categories = ["Low", "Medium", "High"]
+    expected_satisfaction_categories = ["Poor", "Good", "Excellent"]
+
+    assert sales_categories == expected_sales_categories, "Sales category test failed!"
+    assert satisfaction_categories == expected_satisfaction_categories, "Satisfaction category test failed!"
 
     print("Transform test passed successfully.")
 

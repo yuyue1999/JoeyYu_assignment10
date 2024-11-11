@@ -3,47 +3,57 @@ import pyspark.sql.functions as F
 
 
 def init_spark(app_name: str, memory: str = "2g") -> SparkSession:
-    # init spark session
     session = (
         SparkSession.builder.appName(app_name)
-        .config("session.executor.memory", memory)
+        .config("spark.executor.memory", memory)
         .getOrCreate()
     )
     return session
 
 
 def read_csv(session: SparkSession, file_path: str) -> DataFrame:
-    # read csv
     data_file = session.read.csv(file_path, header=True, inferSchema=True)
     return data_file
 
 
 def spark_sql_query(spark: SparkSession, data: DataFrame):
-    # create a temporary view for querying
-    data.createOrReplaceTempView("performance")
-
-    # execute query
+    data.createOrReplaceTempView("sales_data")
     result = spark.sql(
         """
-        SELECT name, attendance_rate
-        FROM performance
-        WHERE final_grade > 80
-    """
+        SELECT store_name, location, monthly_sales
+        FROM sales_data
+        WHERE customer_satisfaction > 80
+        """
     )
     result.show()
     return result
 
 
 def transform(data: DataFrame) -> DataFrame:
-    conditions = [
-        (F.col("attendance_rate") < 50, "Low"),
-        ((F.col("attendance_rate") >= 50) & (F.col("attendance_rate") < 80), "Medium"),
-        (F.col("attendance_rate") >= 80, "High"),
+    sales_conditions = [
+        (F.col("monthly_sales") < 30000, "Low"),
+        ((F.col("monthly_sales") >= 30000) & (F.col("monthly_sales") < 50000), "Medium"),
+        (F.col("monthly_sales") >= 50000, "High"),
     ]
 
-    return data.withColumn(
-        "attendance_category",
-        F.when(conditions[0][0], conditions[0][1])
-        .when(conditions[1][0], conditions[1][1])
-        .otherwise(conditions[2][1]),
+    satisfaction_conditions = [
+        (F.col("customer_satisfaction") < 75, "Poor"),
+        ((F.col("customer_satisfaction") >= 75) & (F.col("customer_satisfaction") < 90), "Good"),
+        (F.col("customer_satisfaction") >= 90, "Excellent"),
+    ]
+
+    data = data.withColumn(
+        "sales_category",
+        F.when(sales_conditions[0][0], sales_conditions[0][1])
+        .when(sales_conditions[1][0], sales_conditions[1][1])
+        .otherwise(sales_conditions[2][1]),
     )
+
+    data = data.withColumn(
+        "satisfaction_category",
+        F.when(satisfaction_conditions[0][0], satisfaction_conditions[0][1])
+        .when(satisfaction_conditions[1][0], satisfaction_conditions[1][1])
+        .otherwise(satisfaction_conditions[2][1]),
+    )
+
+    return data

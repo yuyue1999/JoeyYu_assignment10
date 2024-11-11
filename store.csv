@@ -1,0 +1,11 @@
+store_id,store_name,location,monthly_sales,customer_satisfaction
+1,Store A,New York,50000,85
+2,Store B,Los Angeles,45000,90
+3,Store C,Chicago,30000,78
+4,Store D,Houston,52000,92
+5,Store E,Phoenix,48000,88
+6,Store F,Philadelphia,55000,95
+7,Store G,San Antonio,27000,70
+8,Store H,San Diego,31000,82
+9,Store I,Dallas,29000,75
+10,Store J,San Jose,47000,91
