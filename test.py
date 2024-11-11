@@ -10,7 +10,7 @@ def test_init_spark():
 
 def test_read_csv():
     spark = init_spark(app_name="PySpark Data Processing")
-    csv_file_path = "store_sales.csv"
+    csv_file_path = "store.csv"
     df = read_csv(spark, csv_file_path)
     print(df)
     assert df.count() > 0, "Test failed."
@@ -20,7 +20,7 @@ def test_read_csv():
 def test_spark_sql_query():
     # create SparkSession for testing
     spark = SparkSession.builder.appName("Spark SQL Query Test").getOrCreate()
-    csv_file_path = "store_sales.csv"
+    csv_file_path = "store.csv"
     df = read_csv(spark, csv_file_path)
     result_df = spark_sql_query(spark, df)
 
