@@ -4,7 +4,7 @@ from lib import init_spark, read_csv, spark_sql_query, transform
 if __name__ == "__main__":
     spark = init_spark(app_name="PySpark Data Processing")
 
-    csv_file_path = "student_performance.csv"
+    csv_file_path = "store.csv"
     df = read_csv(spark, csv_file_path)
 
     # show original
