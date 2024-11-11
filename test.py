@@ -26,6 +26,7 @@ def test_spark_sql_query():
 
     # expected df with stores that have customer satisfaction > 80
     expected_data = [
+        Row(store_name="Store A", location="New York", monthly_sales=50000),
         Row(store_name="Store B", location="Los Angeles", monthly_sales=45000),
         Row(store_name="Store D", location="Houston", monthly_sales=52000),
         Row(store_name="Store E", location="Phoenix", monthly_sales=48000),
